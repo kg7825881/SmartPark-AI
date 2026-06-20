@@ -1,11 +1,18 @@
-# backend/app/process_csv.py
+import os
 import pandas as pd
 import numpy as np
 from sklearn.cluster import DBSCAN
 
-def process_hackathon_dataset(file_path: str):
-    # Read the dataset file provided by organizers
-    df = pd.read_csv("/Users/sumitk.gupta/Documents/smartpark-ai/police violation_anonymized791b166.csv")
+# --- DYNAMIC PATH RESOLUTION FOR PRODUCTION DEPLOYMENT ---
+# 1. Get the absolute path of the folder where process_csv.py lives (backend/app)
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# 2. Go up one level to the 'backend' folder and point to the CSV file
+CSV_PATH = os.path.join(CURRENT_DIR, "..", "police violation_anonymized791b166.csv")
+
+def process_hackathon_dataset(file_path: str = CSV_PATH):
+    # Read the dataset using the dynamic path instead of the hardcoded local path
+    df = pd.read_csv(file_path)
     
     # Clean string columns for safety
     df['location_name'] = df['location'].fillna('Unknown Intersection').astype(str)
