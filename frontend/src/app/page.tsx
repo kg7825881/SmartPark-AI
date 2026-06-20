@@ -1,4 +1,3 @@
-// frontend/src/app/page.tsx
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -41,7 +40,7 @@ export default function Dashboard() {
   useEffect(() => {
     async function fetchDashboardData() {
       try {
-        const response = await fetch('http://localhost:8000/api/dashboard-summary');
+        const response = await fetch('https://smartpark-backend-vtrh.onrender.com/api/dashboard-summary');
         const data = await response.json();
         if (!data.error) {
           setMetrics(data.metrics);

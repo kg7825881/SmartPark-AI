@@ -23,7 +23,7 @@ export default function ViolationsMapPage() {
   useEffect(() => {
     async function fetchHeatmapData() {
       try {
-        const response = await fetch('http://localhost:8000/api/heatmap-data');
+        const response = await fetch('https://smartpark-backend-vtrh.onrender.com/api/heatmap-data');
         const data = await response.json();
         setPoints(data.points);
       } catch (error) {
