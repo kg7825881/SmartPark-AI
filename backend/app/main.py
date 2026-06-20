@@ -14,11 +14,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-CSV_PATH = "/Users/sumitk.gupta/Documents/smartpark-ai/police violation_anonymized791b166.csv"
-
 # --- CACHE DATA IN MEMORY AT STARTUP ---
 print("⚙️ Ingesting and clustering data from CSV...")
-GLOBAL_DF = process_hackathon_dataset(CSV_PATH)
+# Calling the function empty so it uses the dynamic path we built!
+GLOBAL_DF = process_hackathon_dataset()
 print("✅ CSV Data Processed and Cached Successfully!")
 
 @app.get("/api/dashboard-summary")
@@ -59,8 +58,6 @@ def get_dashboard_summary():
         },
         "recommendations": recommendations
     }
-
-# Add this below your existing get_dashboard_summary() endpoint
 
 @app.get("/api/heatmap-data")
 def get_heatmap_data():
