@@ -12,7 +12,7 @@ CSV_PATH = os.path.join(CURRENT_DIR, "..", "police violation_anonymized791b166.c
 
 def process_hackathon_dataset(file_path: str = CSV_PATH):
     # Read the dataset using the dynamic path instead of the hardcoded local path
-    df = pd.read_csv(file_path)
+    df = pd.read_csv(file_path, nrows=40000)
     
     # Clean string columns for safety
     df['location_name'] = df['location'].fillna('Unknown Intersection').astype(str)
