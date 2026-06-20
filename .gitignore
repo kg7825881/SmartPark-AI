@@ -3,10 +3,7 @@ venv/
 __pycache__/
 *.pyc
 
-# Datasets & ML Weights (Uncomment if you want to ignore the CSV)
-*.csv
-# *.pt
-# *.h5
+
 
 # Next.js / Node
 frontend/node_modules/
