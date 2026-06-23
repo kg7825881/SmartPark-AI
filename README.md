@@ -78,6 +78,6 @@ Navigate to http://localhost:3000 to access the dashboard.
 
 ## 🚀 Live Deployment
 
-* Frontend Dashboard: [SmartPark AI](smart-park-ai-silk.vercel.app)
+* Frontend Dashboard: [SmartPark AI](https://smart-park-ai-silk.vercel.app/)
 
 * Backend API Docs: [Backend](https://smartpark-backend-vtrh.onrender.com/docs)
