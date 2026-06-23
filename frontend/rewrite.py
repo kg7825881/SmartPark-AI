@@ -1,132 +1,15 @@
-'use client';
+import os
 
-import React, { useState, useEffect } from 'react';
-import dynamic from 'next/dynamic';
-import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
-import Link from 'next/link';
+filepath = r'c:\Users\ojhav\OneDrive\Desktop\Hackathon\SmartPark-AI-main\frontend\src\app\page.tsx'
+with open(filepath, 'r', encoding='utf-8') as f:
+    content = f.read()
 
-// --- CLEAN DYNAMIC IMPORT (Safely loads the isolated map) ---
-const MapComponent = dynamic(() => import('../components/Map'), { ssr: false });
+return_idx = content.find('  return (')
 
-interface MetricSummary {
-  total_violations: string;
-  active_hotspots: string;
-  avg_congestion: string;
-  enforcement_score: string;
-}
-
-interface RecommendationItem {
-  location: string;
-  congestion_score: number;
-  priority_score: number;
-  status: string;
-  latitude: number;
-  longitude: number;
-}
-
-interface JunctionItem {
-  junction_name: string;
-  total_violations: number;
-  avg_congestion: number;
-  approval_rate: number;
-  risk_score: number;
-  risk_tier: string;
-  recommended_action: string;
-}
-
-interface ForecastItem {
-  junction_name: string;
-  forecast_score: number;
-  confidence_score: number;
-  expected_congestion: number;
-  expected_violation_volume: number;
-  predicted_risk_tier: string;
-}
-
-interface LifecycleItem {
-  junction_name: string;
-  lifecycle_stage: string;
-  risk_score: number;
-  trend_direction: string;
-  total_violations: number;
-  active_weeks: number;
-}
-
-interface EnforcementItem {
-  junction_name: string;
-  risk_tier: string;
-  forecast_score: number;
-  lifecycle_stage: string;
-  recommended_action: string;
-  priority_level: number;
-  reason: string;
-}
-
-export default function Dashboard() {
-  const [metrics, setMetrics] = useState<MetricSummary | null>(null);
-  const [recommendations, setRecommendations] = useState<RecommendationItem[]>([]);
-  const [junctions, setJunctions] = useState<JunctionItem[]>([]);
-  const [forecasts, setForecasts] = useState<ForecastItem[]>([]);
-  const [lifecycles, setLifecycles] = useState<LifecycleItem[]>([]);
-  const [enforcements, setEnforcements] = useState<EnforcementItem[]>([]);
-  const [hourlyTrend, setHourlyTrend] = useState<any[]>([]);
-  const [clusters, setClusters] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchDashboardData() {
-      try {
-        const fetchJson = async (url: string) => {
-          try {
-            const res = await fetch(url);
-            if (!res.ok) return null;
-            return await res.json();
-          } catch (e) {
-            return null;
-          }
-        };
-
-        const [dashData, jData, fData, lData, eData, clusterData] = await Promise.all([
-          fetchJson('http://localhost:8000/api/dashboard-summary'),
-          fetchJson('http://localhost:8000/api/junctions'),
-          fetchJson('http://localhost:8000/api/forecast?hours_ahead=1'),
-          fetchJson('http://localhost:8000/api/lifecycle'),
-          fetchJson('http://localhost:8000/api/enforcement'),
-          fetchJson('http://localhost:8000/api/spatial-clusters')
-        ]);
-
-        if (dashData && !dashData.error) {
-          setMetrics(dashData.metrics);
-          setRecommendations(dashData.recommendations);
-          setHourlyTrend(dashData.hourly_trend || []);
-        }
-        if (Array.isArray(jData)) {
-          setJunctions(jData);
-        }
-        if (Array.isArray(fData)) {
-          setForecasts(fData);
-        }
-        if (Array.isArray(lData)) {
-          setLifecycles(lData);
-        }
-        if (Array.isArray(eData)) {
-          setEnforcements(eData);
-        }
-        if (Array.isArray(clusterData)) {
-          setClusters(clusterData);
-        }
-      } catch (error) {
-        console.error("Failed to execute dashboard data pipeline:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchDashboardData();
-    const interval = setInterval(fetchDashboardData, 10000);
-    return () => clearInterval(interval);
-  }, []);
-  // Lifecycle Distribution math
+if return_idx != -1:
+    before_return = content[:return_idx]
+    
+    new_return = """  // Lifecycle Distribution math
   const lifecycleCounts = lifecycles.reduce((acc, l) => {
     acc[l.lifecycle_stage] = (acc[l.lifecycle_stage] || 0) + 1;
     return acc;
@@ -135,7 +18,7 @@ export default function Dashboard() {
 
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-[#0a0c10]">
-
+      
       {/* LEFT SIDEBAR NAVIGATION */}
       <aside className="w-64 bg-[#11141b] border-r border-gray-800 flex flex-col p-5 space-y-6 shrink-0 z-10">
         <div className="flex items-center space-x-3">
@@ -157,7 +40,7 @@ export default function Dashboard() {
 
       {/* DASHBOARD CONTAINER BODY */}
       <main className="flex-1 flex flex-col overflow-y-auto p-8 space-y-8 bg-gradient-to-b from-[#0a0c10] to-[#0d1017]">
-
+        
         <header className="flex justify-between items-center pb-4 border-b border-gray-800/50">
           <div>
             <h1 className="text-3xl font-bold text-white tracking-tight">EXECUTIVE COMMAND CENTER</h1>
@@ -181,7 +64,7 @@ export default function Dashboard() {
             <div className="absolute -right-4 -top-4 w-24 h-24 bg-blue-500/5 rounded-full blur-2xl group-hover:bg-blue-500/10 transition-colors"></div>
             <p className="text-xs font-bold text-gray-500 tracking-wider uppercase mb-2">Total Violations</p>
             <h3 className="text-4xl font-bold text-white font-mono tracking-tight">
-              {metrics?.total_violations ? Number(String(metrics.total_violations).replace(/,/g, '')).toLocaleString('en-IN') : '0'}
+              {metrics?.total_violations ? Number(metrics.total_violations.replace(/,/g, '')).toLocaleString('en-IN') : '0'}
             </h3>
           </div>
           <div className="bg-[#11141b] border border-gray-800 rounded-xl p-6 shadow-lg relative overflow-hidden group hover:border-cyan-900/50 transition-colors">
@@ -212,7 +95,7 @@ export default function Dashboard() {
           <div className="hidden md:block h-12 w-px bg-gray-800"></div>
           <div className="flex flex-col items-center md:items-start text-center md:text-left w-full md:w-1/4">
             <span className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 flex items-center"><span className="mr-2">🔮</span> Highest Forecast</span>
-            <span className="text-xl font-bold text-purple-400 truncate w-full" title={[...forecasts].sort((a, b) => b.forecast_score - a.forecast_score)[0]?.junction_name}>{[...forecasts].sort((a, b) => b.forecast_score - a.forecast_score)[0]?.junction_name || 'Loading...'}</span>
+            <span className="text-xl font-bold text-purple-400 truncate w-full" title={[...forecasts].sort((a,b)=>b.forecast_score - a.forecast_score)[0]?.junction_name}>{[...forecasts].sort((a,b)=>b.forecast_score - a.forecast_score)[0]?.junction_name || 'Loading...'}</span>
           </div>
           <div className="hidden md:block h-12 w-px bg-gray-800"></div>
           <div className="flex flex-col items-center md:items-start text-center md:text-left w-full md:w-1/4">
@@ -222,74 +105,7 @@ export default function Dashboard() {
           <div className="hidden md:block h-12 w-px bg-gray-800"></div>
           <div className="flex flex-col items-center md:items-start text-center md:text-left w-full md:w-1/4">
             <span className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 flex items-center"><span className="mr-2">🧬</span> Most Critical Lifecycle</span>
-            <span className="text-xl font-bold text-orange-400 truncate w-full" title={lifecycles.find(l => l.lifecycle_stage === 'Critical')?.junction_name || lifecycles[0]?.junction_name}>{lifecycles.find(l => l.lifecycle_stage === 'Critical')?.junction_name || lifecycles[0]?.junction_name || 'Loading...'}</span>
-          </div>
-        </section>
-
-        {/* VISUAL INTELLIGENCE ROW: CONGESTION TREND & GEOSPATIAL CLUSTERS */}
-        <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Card 1: LIVE CONGESTION INTENSITY TREND */}
-          <div className="bg-[#11141b] border border-gray-800 rounded-xl p-6 shadow-lg flex flex-col h-[380px]">
-            <h2 className="text-xs font-bold tracking-widest text-gray-400 uppercase mb-4 flex items-center">
-              <span className="w-2.5 h-2.5 bg-purple-500 rounded-full mr-2 shadow-[0_0_8px_#a78bfa]"></span> LIVE CONGESTION INTENSITY TREND
-            </h2>
-            <div className="flex-1 w-full min-h-[300px]">
-              <ResponsiveContainer width="100%" height="100%" minHeight={300}>
-                <AreaChart
-                  data={hourlyTrend.length > 0 ? hourlyTrend : [
-                    { hour: '08:00', violations: 140 },
-                    { hour: '12:00', violations: 420 },
-                    { hour: '17:00', violations: 890 },
-                    { hour: '21:00', violations: 310 }
-                  ]}
-                  margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
-                >
-                  <defs>
-                    <linearGradient id="colorViolations" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.45} />
-                      <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0.0} />
-                    </linearGradient>
-                  </defs>
-                  <XAxis
-                    dataKey="hour"
-                    stroke="#6b7280"
-                    fontSize={11}
-                    tickLine={false}
-                    axisLine={false}
-                    ticks={['08:00', '12:00', '17:00', '21:00']}
-                  />
-                  <YAxis
-                    stroke="#6b7280"
-                    fontSize={11}
-                    tickLine={false}
-                    axisLine={false}
-                  />
-                  <Tooltip
-                    contentStyle={{ backgroundColor: '#11141b', borderColor: '#374151', borderRadius: '8px' }}
-                    labelStyle={{ color: '#a78bfa', fontWeight: 'bold' }}
-                    itemStyle={{ color: '#fff' }}
-                  />
-                  <Area
-                    type="monotone"
-                    dataKey="violations"
-                    stroke="#a78bfa"
-                    strokeWidth={2}
-                    fillOpacity={1}
-                    fill="url(#colorViolations)"
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-
-          {/* Card 2: GEOSPATIAL SPATIAL CLUSTER INDEX */}
-          <div className="bg-[#11141b] border border-gray-800 rounded-xl p-6 shadow-lg flex flex-col h-[380px]">
-            <h2 className="text-xs font-bold tracking-widest text-gray-400 uppercase mb-4 flex items-center">
-              <span className="w-2.5 h-2.5 bg-purple-500 rounded-full mr-2 shadow-[0_0_8px_#a78bfa]"></span> GEOSPATIAL SPATIAL CLUSTER INDEX
-            </h2>
-            <div className="flex-1 w-full min-h-0 rounded-lg overflow-hidden border border-gray-800/80 relative z-0">
-              <MapComponent clusters={clusters} />
-            </div>
+            <span className="text-xl font-bold text-orange-400 truncate w-full" title={lifecycles.find(l=>l.lifecycle_stage==='Critical')?.junction_name || lifecycles[0]?.junction_name}>{lifecycles.find(l=>l.lifecycle_stage==='Critical')?.junction_name || lifecycles[0]?.junction_name || 'Loading...'}</span>
           </div>
         </section>
 
@@ -315,11 +131,12 @@ export default function Dashboard() {
                 {enforcements.slice(0, 10).map((e, i) => (
                   <tr key={i} className={`transition-all duration-200 ${e.priority_level === 1 ? 'bg-red-950/20 hover:bg-red-900/30' : 'hover:bg-[#161a23]'}`}>
                     <td className="py-4 text-center">
-                      <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold ${e.priority_level === 1 ? 'bg-red-500 text-white shadow-[0_0_12px_#ef4444]' :
-                          e.priority_level === 2 ? 'bg-orange-500 text-white shadow-[0_0_8px_#f97316]' :
-                            e.priority_level === 3 ? 'bg-yellow-500 text-black' :
-                              'bg-gray-800 text-gray-400'
-                        }`}>
+                      <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold ${
+                        e.priority_level === 1 ? 'bg-red-500 text-white shadow-[0_0_12px_#ef4444]' :
+                        e.priority_level === 2 ? 'bg-orange-500 text-white shadow-[0_0_8px_#f97316]' :
+                        e.priority_level === 3 ? 'bg-yellow-500 text-black' :
+                        'bg-gray-800 text-gray-400'
+                      }`}>
                         {e.priority_level}
                       </span>
                     </td>
@@ -336,7 +153,7 @@ export default function Dashboard() {
 
         {/* STRATEGIC INTELLIGENCE SECTION */}
         <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
+          
           {/* Top Junction Risks */}
           <div className="bg-[#11141b] border border-gray-800 rounded-xl p-6 shadow-lg">
             <h2 className="text-xs font-bold tracking-widest text-gray-500 uppercase mb-6 flex items-center"><span className="w-2 h-2 bg-red-500 rounded-full mr-2"></span> Top Junction Risks</h2>
@@ -345,10 +162,11 @@ export default function Dashboard() {
                 <div key={i} className="flex justify-between items-center group">
                   <div className="truncate mr-4 text-sm font-medium text-gray-300 group-hover:text-white transition-colors">{j.junction_name}</div>
                   <div className="flex items-center space-x-4 shrink-0">
-                    <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider ${j.risk_tier === 'Critical' ? 'bg-red-500/10 text-red-400 border border-red-500/20' :
-                        j.risk_tier === 'High' ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20' :
-                          'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20'
-                      }`}>{j.risk_tier}</span>
+                    <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider ${
+                      j.risk_tier === 'Critical' ? 'bg-red-500/10 text-red-400 border border-red-500/20' :
+                      j.risk_tier === 'High' ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20' : 
+                      'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20'
+                    }`}>{j.risk_tier}</span>
                     <span className="text-sm font-mono font-bold text-white w-10 text-right">{j.risk_score}</span>
                   </div>
                 </div>
@@ -360,7 +178,7 @@ export default function Dashboard() {
           <div className="bg-[#11141b] border border-gray-800 rounded-xl p-6 shadow-lg">
             <h2 className="text-xs font-bold tracking-widest text-gray-500 uppercase mb-6 flex items-center"><span className="w-2 h-2 bg-purple-500 rounded-full mr-2"></span> Top Forecast Risks</h2>
             <div className="space-y-5">
-              {[...forecasts].sort((a, b) => b.forecast_score - a.forecast_score).slice(0, 5).map((f, i) => (
+              {[...forecasts].sort((a,b)=>b.forecast_score - a.forecast_score).slice(0, 5).map((f, i) => (
                 <div key={i} className="flex justify-between items-center group">
                   <div className="truncate mr-4 text-sm font-medium text-gray-300 group-hover:text-white transition-colors">{f.junction_name}</div>
                   <div className="flex items-center space-x-4 shrink-0">
@@ -404,3 +222,8 @@ export default function Dashboard() {
     </div>
   );
 }
+"""
+    
+    new_content = before_return + new_return
+    with open(filepath, 'w', encoding='utf-8') as f:
+        f.write(new_content)
