@@ -19,11 +19,13 @@ const DynamicHeatMap = dynamic(() => import('../../components/HeatMap'), {
 export default function ViolationsMapPage() {
   const [points, setPoints] = useState<[number, number, number][]>([]);
   const [loading, setLoading] = useState(true);
+  const [forecastHours, setForecastHours] = useState<number>(0);
 
   useEffect(() => {
     async function fetchHeatmapData() {
+      setLoading(true);
       try {
-        const response = await fetch('https://smartpark-backend-vtrh.onrender.com/api/heatmap-data');
+        const response = await fetch(`http://127.0.0.1:8000/api/heatmap-data?hours_ahead=${forecastHours}`);
         const data = await response.json();
         setPoints(data.points);
       } catch (error) {
@@ -33,7 +35,7 @@ export default function ViolationsMapPage() {
       }
     }
     fetchHeatmapData();
-  }, []);
+  }, [forecastHours]);
 
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-[#0a0c10]">
@@ -55,6 +57,26 @@ export default function ViolationsMapPage() {
             <div className="bg-purple-600/10 text-purple-400 p-3 rounded-lg cursor-pointer transition">⚠️ Violations Map</div>
           </Link>
         </nav>
+
+        {/* FORECAST TOGGLE */}
+        <div className="mt-6 border-t border-gray-800 pt-5">
+          <h3 className="text-xs font-bold text-gray-400 tracking-wider mb-3 uppercase">Time Engine</h3>
+          <div className="flex flex-col space-y-2">
+            {[0, 1, 2, 3].map((hours) => (
+              <button
+                key={hours}
+                onClick={() => setForecastHours(hours)}
+                className={`px-3 py-2 text-xs font-bold rounded-lg text-left transition-colors ${
+                  forecastHours === hours 
+                    ? 'bg-purple-600 text-white' 
+                    : 'bg-[#1a1f2c] text-gray-400 hover:text-white hover:bg-gray-800'
+                }`}
+              >
+                {hours === 0 ? 'Current Live Map' : `+${hours} Hour Forecast`}
+              </button>
+            ))}
+          </div>
+        </div>
 
         {/* MAP LEGEND */}
         <div className="mt-auto border-t border-gray-800 pt-5">
